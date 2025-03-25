@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="slova.js"></script>
+    <title>Reško</title>
+
+    <style>
+        .yellow-input {
+            width: 60px;
+            background: yellow;
+            font-size: 18px;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div style="display: flex">
+        <div style="width: 50%">
+            <label for="greenLetters">
+                <div>Uneti slova koja se poklapaju. (Sa * odvajati prazna mesta)</div>
+                <input id="greenLetters" type="text" maxlength="5" style="background: lightgreen; font-size: 18px">
+            </label>
+            <label for="greyLetters">
+                <div>Uneti slova koja reč ne sadrži. (Može bez razmaka bilo kojim redosledom)</div>
+                <input id="greyLetters" type="text" style="background: lightgray; font-size: 18px">
+            </label>
+            <label for="yellowLetters1">
+                <div>Uneti slova koja nisu na mestu. (Za svaku kolonu moze biti vise slova)</div>
+                <input id="yellowLetters1" type="text" class="yellow-input">
+                <input id="yellowLetters2" type="text" class="yellow-input">
+                <input id="yellowLetters3" type="text" class="yellow-input">
+                <input id="yellowLetters4" type="text" class="yellow-input">
+                <input id="yellowLetters5" type="text" class="yellow-input">
+            </label>
+            <div>
+                <button onclick="findMatch()">Pronadji</button>
+            </div>
+        </div>
+
+        <div style="width: 50%; overflow-y: scroll; height: 90vh">
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <div style="position: absolute; bottom: 0">
+        Verzija 0.3
+    </div>
+</body>
+
+
+<script>
+
+    const resultDiv = document.getElementById('result');
+    let words = data.split('\n');
+    // console.log(words.length);
+    const unique = new Set();
+    words.forEach(w => unique.add(w.toLowerCase()));
+    words = Array.from(unique);
+
+
+    function findMatch() {
+        const greenMatch = document.getElementById('greenLetters').value.toLowerCase();
+        const unmatched = document.getElementById('greyLetters').value.toLowerCase();
+        const matches = words.filter(word => {
+            for (let i = 0; i < 5; i++) {
+                if (greenMatch[i] && greenMatch[i] !== '*' && greenMatch[i] !== word[i]) {
+                    return false;
+                }
+                if (unmatched.includes(word[i])) {
+                    return false;
+                }
+
+                const yellowMatch = document.getElementById('yellowLetters' + (i + 1)).value.toLowerCase();
+                if (yellowMatch.includes(word[i]) || !containsAllUnorderedLetter(word, yellowMatch)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        console.log(matches);
+        let result = `Pronadjeno ${matches.length} poklapanja:\n`;
+
+        matches.forEach(match => {
+           result += match + '\n'
+        })
+        resultDiv.innerText = result;
+    }
+
+    function containsAllUnorderedLetter(word, letters) {
+        for (let i = 0; i < letters.length; i++) {
+            if (!word.includes(letters[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+</script>
+
+</html>
